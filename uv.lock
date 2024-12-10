@@ -1,0 +1,28 @@
+version = 1
+requires-python = ">=3.12"
+
+[[package]]
+name = "dearpygui"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/00/dc/aac3b7e5789408096f34616f2c3b3c000332970a9eea0b3362239a1c35bd/dearpygui-2.0.0-cp312-cp312-macosx_10_6_x86_64.whl", hash = "sha256:f0383d74f628ae4622863afff84ab262c9f5163a769836eb470c7243dc9ced0c", size = 2223499 },
+    { url = "https://files.pythonhosted.org/packages/e5/ca/fa3e58376f8c8486f38b7266c69566c1b965072eabc59b4da95b10a114e0/dearpygui-2.0.0-cp312-cp312-macosx_13_0_arm64.whl", hash = "sha256:52c32da6911881564b6cbd95e110d6956095f7a417d2e0c12dcda8274c4fbe72", size = 1873678 },
+    { url = "https://files.pythonhosted.org/packages/6f/a1/427d18fbaa578890507bd8c864262a5f1f1eaa6e10ae2ea75ba9f0a5b5a3/dearpygui-2.0.0-cp312-cp312-manylinux1_x86_64.whl", hash = "sha256:d27f7e64a282c7f0c1387003ec3b247b2c3c1583aea9427283633ad508aa2da6", size = 2636459 },
+    { url = "https://files.pythonhosted.org/packages/35/ad/dd978c8eb4df7c59756d5325d18d28e97b39d3bcd54275f075c1c3c34b17/dearpygui-2.0.0-cp312-cp312-win_amd64.whl", hash = "sha256:29881d01e5d0cce0980a8d8b9761c74ff2f30d16aa800e6002a244bbc894b34e", size = 1814293 },
+    { url = "https://files.pythonhosted.org/packages/79/58/4e1744d2af72a3aa432fd82aeb97dcbc43351b17f837d879b4c4926bd16c/dearpygui-2.0.0-cp313-cp313-macosx_10_6_x86_64.whl", hash = "sha256:3bf0aa19baedb4f130b8de636d4644740ffd9b7008481794c574bf59240808dc", size = 2223494 },
+    { url = "https://files.pythonhosted.org/packages/70/e0/09885f99df476d03e573183a755dc515cd88565cdbf036c385f0dda41dbb/dearpygui-2.0.0-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:ae6fc9aa3390b29387c2bc2bf3ac7a92c10eae2b479818171864fc29a7de344e", size = 1873562 },
+    { url = "https://files.pythonhosted.org/packages/d6/2b/0714feed9e072377d575cb8801ac13a909f7880ca51c9dd6f2d768bcd1ba/dearpygui-2.0.0-cp313-cp313-manylinux1_x86_64.whl", hash = "sha256:f02b0ab56700a775d7e6446e3c424d5bed3386efe721a04518d02461851daadf", size = 2636153 },
+    { url = "https://files.pythonhosted.org/packages/55/9e/a957ffc21d12a1fb66d611f82871944565112b44afa0856bb15c6ece77d5/dearpygui-2.0.0-cp313-cp313-win_amd64.whl", hash = "sha256:e3d52057f49773b10808962806711c3b3119e829d36407afb84ad50522edc9b0", size = 1814308 },
+]
+
+[[package]]
+name = "file-sorter"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "dearpygui" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "dearpygui", specifier = ">=2.0.0" }]

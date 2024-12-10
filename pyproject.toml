@@ -1,0 +1,9 @@
+[project]
+name = "file-sorter"
+version = "0.1.0"
+description = "A small utility to help me sort files when a more manual approach is required"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dearpygui>=2.0.0",
+]
