@@ -2,43 +2,56 @@ from pathlib import Path
 from random import sample
 from subprocess import Popen
 
-import dearpygui.dearpygui as dpg
+from imgui_bundle import hello_imgui, imgui, immapp
 
 
 def get_some_files(base_dir: Path, count: int) -> list[Path]:
     return sample(list(base_dir.iterdir()), count)
 
 
-def _log(sender, app_data, user_data):
-    print(f"sender: {sender}, \t app_data: {app_data}, \t user_data: {user_data}")
+def gui() -> None:
+    viewport = imgui.get_main_viewport()
+    imgui.set_next_window_pos(viewport.pos)
+    imgui.set_next_window_size(viewport.size)
+    if imgui.begin(
+        "main_window",
+        flags=(
+            imgui.WindowFlags_.no_decoration
+            | imgui.WindowFlags_.no_move
+            | imgui.WindowFlags_.no_saved_settings
+        ),
+    ):
+        imgui.begin_group()
+
+        if imgui.begin_child("FileList", (-100, 0), imgui.ChildFlags_.borders):
+            imgui.text("Some content")
+            imgui.text("Some content")
+            imgui.text("Some content")
+        imgui.end_child()
+        imgui.same_line()
+
+        imgui.begin_group()
+        button_size = (-imgui.FLT_MIN, 0)
+        imgui.button("Open", button_size)
+        imgui.button("Edit", button_size)
+        imgui.button("Copy Path", button_size)
+        imgui.button("Delete", button_size)
+        imgui.button("Reroll", button_size)
+        imgui.end_group()
+
+        imgui.end_group()
+    imgui.end()
 
 
 def main() -> None:
     current_dir = Path("/home/joshua/Downloads")
 
-    dpg.create_context()
-    dpg.create_viewport(title="APP", width=800, height=400)
-
-    with dpg.window(tag="root"):
-        with dpg.group(horizontal=True):
-            dpg.add_listbox(get_some_files(current_dir, 3), tag="file_select")
-            with dpg.group():
-                dpg.add_button(
-                    label="Open",
-                    callback=lambda *_: Popen(
-                        ["xdg-open", dpg.get_value("file_select")]
-                    ),
-                )
-                dpg.add_button(label="Edit")
-                dpg.add_button(label="Copy Path")
-                dpg.add_button(label="Delete")
-                dpg.add_button(label="Reroll")
-
-    dpg.setup_dearpygui()
-    dpg.show_viewport()
-    dpg.set_primary_window("root", True)
-    dpg.start_dearpygui()
-    dpg.destroy_context()
+    hello_imgui.set_assets_folder(str(Path(__file__).with_name("assets")))
+    immapp.run(
+        gui_function=gui,
+        window_title="APP",
+        window_size=(600, 200),
+    )
 
 
 if __name__ == "__main__":
