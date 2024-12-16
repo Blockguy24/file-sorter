@@ -2,7 +2,7 @@ from pathlib import Path
 from random import sample
 from subprocess import Popen
 
-from imgui_bundle import hello_imgui, imgui, immapp
+from imgui_bundle import hello_imgui, imgui, imgui_ctx, immapp
 
 
 def get_some_files(base_dir: Path, count: int) -> list[Path]:
@@ -13,34 +13,29 @@ def gui() -> None:
     viewport = imgui.get_main_viewport()
     imgui.set_next_window_pos(viewport.pos)
     imgui.set_next_window_size(viewport.size)
-    if imgui.begin(
-        "main_window",
+    with imgui_ctx.begin(
+        "MainWindow",
         flags=(
             imgui.WindowFlags_.no_decoration
             | imgui.WindowFlags_.no_move
             | imgui.WindowFlags_.no_saved_settings
         ),
     ):
-        imgui.begin_group()
-
-        if imgui.begin_child("FileList", (-100, 0), imgui.ChildFlags_.borders):
-            imgui.text("Some content")
-            imgui.text("Some content")
-            imgui.text("Some content")
-        imgui.end_child()
-        imgui.same_line()
-
-        imgui.begin_group()
-        button_size = (-imgui.FLT_MIN, 0)
-        imgui.button("Open", button_size)
-        imgui.button("Edit", button_size)
-        imgui.button("Copy Path", button_size)
-        imgui.button("Delete", button_size)
-        imgui.button("Reroll", button_size)
-        imgui.end_group()
-
-        imgui.end_group()
-    imgui.end()
+        with imgui_ctx.begin_group():
+            with imgui_ctx.begin_child(
+                "FileList", (-100, 0), imgui.ChildFlags_.borders
+            ):
+                imgui.text("Some content")
+                imgui.text("Some content")
+                imgui.text("Some content")
+            imgui.same_line()
+            with imgui_ctx.begin_group():
+                button_size = (-imgui.FLT_MIN, 0)
+                imgui.button("Open", button_size)
+                imgui.button("Edit", button_size)
+                imgui.button("Copy Path", button_size)
+                imgui.button("Delete", button_size)
+                imgui.button("Reroll", button_size)
 
 
 def main() -> None:
