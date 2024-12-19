@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import shutil
-import subprocess
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 from random import sample
+from subprocess import run as run_fg
 from threading import Thread
 from typing import Any
 
@@ -27,9 +27,9 @@ def copy_params[**P](src: Callable[P, Any]):
     return decorator
 
 
-@copy_params(subprocess.run)
+@copy_params(run_fg)
 def run_bg(*args, **kwargs) -> None:
-    Thread(target=lambda: subprocess.run(*args, **kwargs)).start()
+    Thread(target=lambda: run_fg(*args, **kwargs)).start()
 
 
 def gui(state: AppState) -> None:
@@ -42,6 +42,7 @@ def gui(state: AppState) -> None:
             imgui.WindowFlags_.no_decoration
             | imgui.WindowFlags_.no_move
             | imgui.WindowFlags_.no_saved_settings
+            | imgui.WindowFlags_.no_docking
         ),
     ):
         imgui.begin_disabled(state.move_dialog is not None)
@@ -53,6 +54,7 @@ def gui(state: AppState) -> None:
                     _, clicked = imgui.selectable(str(path), i == state.select_idx)
                     if clicked:
                         state.select_idx = i
+                        state.update_file_info()
             imgui.same_line()
             with imgui_ctx.begin_group():
                 button_size = (-imgui.FLT_MIN, 0)
@@ -61,8 +63,9 @@ def gui(state: AppState) -> None:
                     run_bg(["xdg-open", str(state.selected_file)])
                 if imgui.button("Edit", button_size):
                     run_bg(["alacritty", "--command", "nvim", str(state.selected_file)])
+                if imgui.button("Info", button_size):
+                    state.file_info_opened = True
                 if imgui.button("Copy Path", button_size):
-                    # run(["xclip", "-selection", "clipboard", "-i"], input=bytes(state.selected_file))
                     imgui.set_clipboard_text(str(state.selected_file))
                 if imgui.button("Move", button_size):
                     if state.selected_file.is_dir():
@@ -75,6 +78,7 @@ def gui(state: AppState) -> None:
                         )
                 if imgui.button("Trash", button_size):
                     run_bg(["trash-put", str(state.selected_file)])
+                    state.remove_selected()
                 if imgui.button("Delete", button_size):
                     imgui.open_popup("Confirm Delete")
                 imgui.end_disabled()
@@ -99,6 +103,14 @@ def gui(state: AppState) -> None:
                 if imgui.button("Cancel", (100, 0)):
                     imgui.close_current_popup()
 
+
+        if state.file_info_opened:
+            imgui.set_next_window_focus()
+            with imgui_ctx.begin("File Info", state.file_info_opened) as window:
+                if window:
+                    imgui.text_wrapped(state.file_info)
+                state.file_info_opened = window.opened
+
     if state.move_dialog is not None and state.move_dialog.ready(timeout=0):
         if new_path := state.move_dialog.result():
             shutil.move(state.selected_file, new_path)
@@ -112,10 +124,13 @@ class AppState:
     files: list[Path] = field(default_factory=list)
     select_idx: int | None = None
     move_dialog: pfd.save_file | pfd.select_folder | None = None
+    file_info_opened: bool = False
+    file_info: str = "No file selected"
 
     def reroll_files(self):
         self.files = get_some_files(self.current_dir, 3)
         self.select_idx = None
+        self.update_file_info()
 
     @property
     def selected_file(self) -> Path | None:
@@ -126,6 +141,18 @@ class AppState:
     def remove_selected(self) -> None:
         del self.files[self.select_idx]
         self.select_idx = None
+        self.update_file_info()
+
+    def update_file_info(self) -> None:
+        if self.selected_file is None:
+            self.file_info = "No file selected"
+        stat = run_fg(
+            ["stat", str(self.selected_file)], capture_output=True, text=True
+        ).stdout
+        filetype = run_fg(
+            ["file", str(self.selected_file)], capture_output=True, text=True
+        ).stdout
+        self.file_info = f"{stat}\n{filetype}"
 
 
 def main() -> None:
