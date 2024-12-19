@@ -14,7 +14,10 @@ from imgui_bundle import portable_file_dialogs as pfd
 
 
 def get_some_files(base_dir: Path, count: int) -> list[Path]:
-    return sample(list(base_dir.iterdir()), count)
+    files = list(base_dir.iterdir())
+    if len(files) < count:
+        return files
+    return sample(files, count)
 
 
 def copy_params[**P](src: Callable[P, Any]):
