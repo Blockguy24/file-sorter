@@ -13,7 +13,9 @@ A small utility to help me sort files when a more manual approach is required
 - Repeat until the folder is empty
 
 ## What does it look like?
-insert image here
+![image](https://github.com/user-attachments/assets/fb1656a0-c8b9-4d8e-b9a5-c8c1f475d5ca)
 
 ## Results
-insert image here
+- Finally an empty Downloads folder
+
+![image](https://github.com/user-attachments/assets/84ed3ac7-428d-4761-89da-3463069378f8)
